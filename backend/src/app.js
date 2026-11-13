@@ -11,11 +11,9 @@ import patientRoutes from './routes/patientRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 
 dotenv.config();
-connectDB();
 
 const app = express();
 
-// Security & Parsing Middleware
 app.set('trust proxy', 1);
 app.use(helmet());
 app.use(
@@ -27,18 +25,25 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Health Check Endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'Doctor Tracker API is running' });
+// Ensure DB connects on every serverless invocation
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
-// Mount API Routes
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Doctor Tracker API is running on Vercel' });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-// Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.statusCode || 500).json({
@@ -47,7 +52,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Only listen on a port during local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
