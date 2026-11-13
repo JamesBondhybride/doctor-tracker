@@ -14,18 +14,23 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://doctor-tracker-murex.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.set('trust proxy', 1);
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(cookieParser());
 
-// Ensure DB connects on every serverless invocation
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -36,7 +41,7 @@ app.use(async (req, res, next) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'Doctor Tracker API is running on Vercel' });
+  res.status(200).json({ status: 'OK', message: 'Doctor Tracker API is running' });
 });
 
 app.use('/api/auth', authRoutes);
@@ -52,7 +57,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Only listen on a port during local development
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
