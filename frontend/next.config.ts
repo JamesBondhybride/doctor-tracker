@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
         destination:
           process.env.NODE_ENV === "development"
             ? "http://localhost:5000/api/:path*"
-            : "https://vercel.app*",
+            : "https://doctor-tracker-backend-five.vercel.app/api/:path*",
       },
     ];
   },
