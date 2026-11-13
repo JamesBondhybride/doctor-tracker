@@ -1,5 +1,11 @@
 # Doctor Tracker
 
+## Live Deployments
+* **Frontend Application:** [https://doctor-tracker-murex.vercel.app](https://doctor-tracker-murex.vercel.app)
+* **Backend API:** [https://doctor-tracker-backend-five.vercel.app](https://doctor-tracker-backend-five.vercel.app)
+
+---
+
 ## Description
 **Doctor Tracker** is a secure, full-stack administrative web application designed to streamline the management of medical practitioners and their patient records. Built with Next.js, Node.js/Express, and MongoDB, the platform focuses on high-performance database querying, responsive UI/UX, and actionable data visualization. Authenticated administrators can efficiently create, search, filter, and paginate doctor and patient records while monitoring real-time clinic metrics through an interactive analytics dashboard.
 
@@ -63,15 +69,14 @@ The application uses a decoupled client-server architecture communicating over R
 git clone https://github.com
 cd doctor-tracker
 ```
-*(Note: If your frontend and backend are in separate repositories, clone each repository into its own folder.)*
 
-### 2. Backend Setup (`doctor-tracker-backend`)
+### 2. Backend Setup (`backend`)
 Navigate to the backend folder and install dependencies:
 ```bash
 cd backend
 npm install
 ```
-Copy the `.env.example` file to `.env` and fill in your values:
+Copy the `.env.example` file to `.env` and configure your MongoDB URI, JWT secret, and frontend origin:
 ```bash
 cp .env.example .env
 ```
@@ -91,7 +96,7 @@ Open a new terminal, navigate to the frontend folder, and install dependencies:
 cd frontend
 npm install
 ```
-Copy the `.env.example` file to `.env.local` and configure the API URL:
+Copy the `.env.example` file to `.env.local` and configure the backend API URL:
 ```bash
 cp .env.example .env.local
 ```
@@ -102,15 +107,13 @@ npm run dev
 The frontend application will be accessible at `http://localhost:3000`.
 
 ### 4. Demo / Admin Credentials
-*(Replace with your seeded admin credentials or registration instructions for evaluators)*
+Use the following credentials to sign in to the live admin portal (fields are left blank on initial load for security):
 * **Email:** `admin@doctortracker.com`
-* **Password:** `Admin@1234`
+* **Password:** `Admin123!`
 
 ---
 
 ## Visual Evidence
-
-> **Note:** Replace the placeholder paths below with actual high-resolution screenshots stored in your repository (e.g., `/screenshots/...`).
 
 ### Desktop Views
 
