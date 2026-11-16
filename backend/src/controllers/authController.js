@@ -1,18 +1,25 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+const getCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'lax', // Required for Next.js rewrite proxy
+    path: '/',       // Ensures cookie is sent on all /api routes
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  };
+};
+
 const sendTokenCookie = (user, statusCode, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
+  res.cookie('token', token, getCookieOptions());
 
   res.status(statusCode).json({
     success: true,
+    token, // Included as fallback in case browser blocks cookies
     user: { id: user._id, name: user.name, email: user.email, role: user.role },
   });
 };
@@ -33,7 +40,11 @@ export const login = async (req, res, next) => {
 };
 
 export const logout = (req, res) => {
-  res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
+  res.cookie('token', '', {
+    ...getCookieOptions(),
+    maxAge: 0,
+    expires: new Date(0),
+  });
   res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
 
